@@ -60,9 +60,9 @@ public class TupleDesc implements Serializable {
      *            be null.
      */
     public TupleDesc(Type[] typeAr, String[] fieldAr) {
-        int i;
+        
         tdlist = new ArrayList<TDItem>(typeAr.length);
-        for(i=0;i<typeAr.length;i++)
+        for(int i=0;i<typeAr.length;i++)
             tdlist.add(new TDItem(typeAr[i],fieldAr[i]));
 
 
@@ -78,9 +78,9 @@ public class TupleDesc implements Serializable {
      *            TupleDesc. It must contain at least one entry.
      */
     public TupleDesc(Type[] typeAr) {
-        int j;
+       
          tdlist = new ArrayList<TDItem>(typeAr.length);
-        for(j=0; j<typeAr.length;j++)
+        for(int j=0; j<typeAr.length;j++)
             tdlist.add(new TDItem(typeAr[j],null));
 
 
@@ -140,12 +140,12 @@ public class TupleDesc implements Serializable {
      */
     public int fieldNameToIndex(String name) throws NoSuchElementException {
         // some code goes here
-        int i,num;
+        int num;
         if(name==null)
             throw new NoSuchElementException();
         boolean nameval= false;
         try{
-        for(i=0;i<tdlist.size();i++)
+        for(int i=0;i<tdlist.size();i++)
         {
 
             String nm= tdlist.get(i).fieldName;
@@ -170,9 +170,9 @@ public class TupleDesc implements Serializable {
      *         Note that tuples from a given TupleDesc are of a fixed size.
      */
     public int getSize() {
-        int lentdlist=0,j;
+        int lentdlist=0;
         Type m;
-        for(j=0;j<tdlist.size();j++){
+        for(int j=0;j<tdlist.size();j++){
             m=tdlist.get(j).fieldType;
 
             lentdlist=lentdlist + m.getLen();
@@ -192,16 +192,16 @@ public class TupleDesc implements Serializable {
      * @return the new TupleDesc
      */
     public static TupleDesc merge(TupleDesc td1, TupleDesc td2) {
-        int i;
+        
         int news=td1.numFields()+td2.numFields();
         Type[] newfieldtype = new Type[news];
         String[] newfieldname = new String[news];
-        for(i=0;i<td1.numFields();i++){
+        for(int i=0;i<td1.numFields();i++){
             newfieldname[i]=td1.getFieldName(i);
             newfieldtype[i]=td1.getFieldType(i);
 
         }
-        for(i=0;i<td2.numFields();i++){
+        for(int i=0;i<td2.numFields();i++){
             newfieldname[i+td1.numFields()]=td2.getFieldName(i);
             newfieldtype[i+td1.numFields()]=td2.getFieldType(i);
 
@@ -258,8 +258,8 @@ public class TupleDesc implements Serializable {
      */
     public String toString() {
         String tupldesc = null;
-        int i;
-        for(i=0;i<this.numFields();i++){
+       
+        for(int i=0;i<this.numFields();i++){
 
             tupldesc = tupldesc + this.getFieldType(i)+"["+Integer.toString(i)+"]("+this.getFieldName(i)+"["+Integer.toString(i)+"]),";
         }
