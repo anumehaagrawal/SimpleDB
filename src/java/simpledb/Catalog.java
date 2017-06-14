@@ -166,10 +166,18 @@ public class Catalog {
         // some code goes here
         return null;
     }
+    Vector<Integer> keys;
 
     public Iterator<Integer> tableIdIterator() {
+        keys=new Vector<Integer>();
+        for(Table data :details){
+            DbFile file= data.getFile();
+            keys.addElement(new Integer(file.getId()));
+
+        }
+
         // some code goes here
-        return null;
+        return keys.iterator();
     }
 
     public String getTableName(int id) {
