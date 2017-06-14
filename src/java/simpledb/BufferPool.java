@@ -34,7 +34,7 @@ public class BufferPool {
      * @param numPages maximum number of pages in this buffer pool.
      */
     public BufferPool(int numPages) {
-        bpage=  new HashMap<PageId,Page>;
+        bpage=  new HashMap<PageId,Page>();
         maxpage = numPages;
     }
 
@@ -60,19 +60,21 @@ public class BufferPool {
             if(bpage.containsKey(pid))
                 return bpage.get(pid);
             else if(bpage.size()>=maxpage){
-                throw new DbException("BufferPool size has been Exceeded!")}
+                throw new DbException("BufferPool size has been Exceeded!");
+            }
               else 
             {
-                DbFile file = getCatalog().getDbFile(pid.getTableId());  // these methods are defined in Catalog.java
+                DbFile file = Database.getCatalog().getDbFile(pid.getTableId());  // these methods are defined in Catalog.java
                 Page p = file.readPage(pid); // Method specified in DbFile.java to read the page
-                bpage.put(pid,p); // Adding page in the Bufferpool , pid and p are parameters specified in HashMap
+                bpage.put(pid,p);   // Adding page in the Bufferpool , pid and p are parameters specified in HashMap
+                  return p;
 
             }
             // create a new page and add
 
 
         // some code goes here
-        return p;
+      
     }
 
     /**

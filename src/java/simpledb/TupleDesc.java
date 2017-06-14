@@ -141,26 +141,24 @@ public class TupleDesc implements Serializable {
     public int fieldNameToIndex(String name) throws NoSuchElementException {
         // some code goes here
         int num;
+        boolean numval=true;
         if(name==null)
-            throw new NoSuchElementException();
-        boolean nameval= false;
-        try{
+            throw new NoSuchElementException("not found");
+        
         for(int i=0;i<tdlist.size();i++)
         {
 
             String nm= tdlist.get(i).fieldName;
-            if(nm.equals(name)){
-                nameval=true;
+            if(nm==null) continue;
+            numval=false;
+
+            if(nm.equals(name))
                 return i;
-            }
+    
         }
-            if(nameval==false)
-                num=2;
-        }
-        catch(NoSuchElementException e){
-            System.out.println("not found!");
-        }
-        return -1;
+        if(numval)
+            throw new NoSuchElementException("All empty");
+        throw new NoSuchElementException("Name doesnt exist");
 
        
     }
@@ -222,10 +220,16 @@ public class TupleDesc implements Serializable {
      * @return true if the object is equal to this TupleDesc.
      */
     public boolean equals(Object o) {
-        TupleDesc otd = (TupleDesc) o;
+
+                if(o==null)
+                    return false;
+                if(!(o instanceof TupleDesc))
+                    return false;
+               TupleDesc otd = (TupleDesc) o;
         int flag,count,i;
         flag=0;
         count=0;
+
         if(this.numFields()==otd.numFields() && this.getSize()==otd.getSize()){
             flag=1;
             for(i=0;i<this.numFields();i++)

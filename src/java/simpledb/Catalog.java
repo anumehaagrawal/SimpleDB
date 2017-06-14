@@ -15,13 +15,36 @@ import java.util.*;
  */
 
 public class Catalog {
+    private class Table
+    { 
+        private DbFile File;
+        private String Name;
+        private String PkeyField;
+        public Table(DbFile file, String name, String pkeyField){
+
+        File=file;
+        Name=name;
+        PkeyField=pkeyField;
+    }
+    public String getName(){
+        return Name;
+    }
+    public String getKeyfield(){
+        return PkeyField;
+    }
+    public DbFile getFile(){
+        return File;
+    }
+
+    }
+    ArrayList<Table> details;
 
     /**
      * Constructor.
      * Creates a new, empty catalog.
      */
     public Catalog() {
-        // some code goes here
+        details=new ArrayList<Table>();       // some code goes here
     }
 
     /**
@@ -34,6 +57,9 @@ public class Catalog {
      * conflict exists, use the last table to be added as the table for a given name.
      */
     public void addTable(DbFile file, String name, String pkeyField) {
+        Table addtab = new Table(file,name,pkeyField);
+        details.add(addtab);
+
         // some code goes here
     }
 
@@ -57,8 +83,22 @@ public class Catalog {
      * @throws NoSuchElementException if the table doesn't exist
      */
     public int getTableId(String name) throws NoSuchElementException {
+        if(name==null)
+            throw new NoSuchElementException();
+        for(Table data : details)
+        {
+
+            if(data.getName().equals(name) && data==null)
+                throw new NoSuchElementException();
+            if(data.getName().equals(name)){
+                DbFile file = data.getFile();
+                return file.getId();
+            }
+           
+        }
+     
         // some code goes here
-        return 0;
+      throw new NoSuchElementException();  
     }
 
     /**
@@ -68,6 +108,19 @@ public class Catalog {
      * @throws NoSuchElementException if the table doesn't exist
      */
     public TupleDesc getTupleDesc(int tableid) throws NoSuchElementException {
+        for(Table data : details)
+        {
+            DbFile file=data.getFile();
+
+                if(file.getId()==tableid && data==null)
+
+                throw new NoSuchElementException();
+
+          
+                if(file.getId()==tableid)
+
+                return file.getTupleDesc();
+        }
         // some code goes here
         return null;
     }
@@ -79,11 +132,37 @@ public class Catalog {
      *     function passed to addTable
      */
     public DbFile getDbFile(int tableid) throws NoSuchElementException {
+              for(Table data : details)
+        {
+            DbFile file=data.getFile();
+
+                if(file.getId()==tableid && data==null)
+
+                throw new NoSuchElementException();
+          
+                if(file.getId()==tableid)
+          
+                return data.getFile();
+        }
+
+        
         // some code goes here
         return null;
     }
 
     public String getPrimaryKey(int tableid) {
+              for(Table data : details)
+        {
+            DbFile file=data.getFile();
+
+                if(file.getId()==tableid && data==null)
+
+                throw new NoSuchElementException();
+          
+                if(file.getId()==tableid)
+           
+                return data.getKeyfield();
+        }
         // some code goes here
         return null;
     }
@@ -94,12 +173,25 @@ public class Catalog {
     }
 
     public String getTableName(int id) {
+
+              for(Table data : details)
+        {
+            DbFile file=data.getFile();
+            
+                if(file.getId()==id && data==null)
+
+                throw new NoSuchElementException();
+          
+                if(file.getId()==id)
+                return data.getName();
+        }
         // some code goes here
         return null;
     }
     
     /** Delete all tables from the catalog */
     public void clear() {
+        details.clear();
         // some code goes here
     }
     
