@@ -12,7 +12,9 @@ import java.util.Iterator;
 public class Tuple implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    private TupleDesc m_td;
+    private RecordId m_rid;
+    private Field[] m_fields;
     /**
      * Create a new tuple with the specified schema (type).
      * 
@@ -22,6 +24,10 @@ public class Tuple implements Serializable {
      */
     public Tuple(TupleDesc td) {
         // some code goes here
+	assert (td instanceof TupleDesc);
+    	assert (td.numFields() > 0);
+    	m_td = td;
+    	m_fields = new Field[td.numFields()];
     }
 
     /**
@@ -29,7 +35,7 @@ public class Tuple implements Serializable {
      */
     public TupleDesc getTupleDesc() {
         // some code goes here
-        return null;
+        return m_td;
     }
 
     /**
@@ -38,7 +44,7 @@ public class Tuple implements Serializable {
      */
     public RecordId getRecordId() {
         // some code goes here
-        return null;
+        return m_rid;
     }
 
     /**
@@ -49,6 +55,7 @@ public class Tuple implements Serializable {
      */
     public void setRecordId(RecordId rid) {
         // some code goes here
+	m_rid=rid;
     }
 
     /**
@@ -61,6 +68,9 @@ public class Tuple implements Serializable {
      */
     public void setField(int i, Field f) {
         // some code goes here
+	assert (i >= 0);
+    	assert (i < m_fields.length);
+    	m_fields[i] = f;
     }
 
     /**
@@ -71,7 +81,10 @@ public class Tuple implements Serializable {
      */
     public Field getField(int i) {
         // some code goes here
-        return null;
+        assert (i >= 0);
+    	assert (i < m_fields.length);
+        return m_fields[i];
+
     }
 
     /**
@@ -84,8 +97,15 @@ public class Tuple implements Serializable {
      */
     public String toString() {
         // some code goes here
-        throw new UnsupportedOperationException("Implement this");
-    }
+       // throw new UnsupportedOperationException("Implement this");
+        String s = "";
+    	for (int i = 0; i < m_fields.length-1; i++){
+    		s += m_fields[i] + "\t";
+    	}
+    	s += m_fields[m_fields.length-1] + "\n";
+    	return s;
+
+}
     
     /**
      * @return
@@ -94,6 +114,6 @@ public class Tuple implements Serializable {
     public Iterator<Field> fields()
     {
         // some code goes here
-        return null;
+        return Arrays.asList(m_fields).iterator();
     }
 }
