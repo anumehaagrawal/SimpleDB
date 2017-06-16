@@ -1,6 +1,7 @@
 package simpledb;
 
 import java.io.*;
+import java.util.HashMap;
 
 /**
  * BufferPool manages the reading and writing of pages into memory from
@@ -14,11 +15,18 @@ import java.io.*;
 public class BufferPool {
     /** Bytes per page, including header. */
     public static final int PAGE_SIZE = 4096;
+    public static final int pagesize =PAGE_SIZE;
 
     /** Default number of pages passed to the constructor. This is used by
     other classes. BufferPool should use the numPages argument to the
     constructor instead. */
     public static final int DEFAULT_PAGES = 50;
+
+    /* Structure to represent bufferpool which has pages */
+    /* PageId and page are interfaces defined in PageId and Page.java */
+    private HashMap<PageId,Page> bpage ;
+    private int maxpage;
+
 
     /**
      * Creates a BufferPool that caches up to numPages pages.
@@ -26,14 +34,15 @@ public class BufferPool {
      * @param numPages maximum number of pages in this buffer pool.
      */
     public BufferPool(int numPages) {
-        // some code goes here
+        bpage=  new HashMap<PageId,Page>();
+        maxpage = numPages;
     }
 
-    /**
+    /*
      * Retrieve the specified page with the associated permissions.
      * Will acquire a lock and may block if that lock is held by another
      * transaction.
-     * <p>
+     *  <p>
      * The retrieved page should be looked up in the buffer pool.  If it
      * is present, it should be returned.  If it is not present, it should
      * be added to the buffer pool and returned.  If there is insufficient
@@ -43,11 +52,29 @@ public class BufferPool {
      * @param tid the ID of the transaction requesting the page
      * @param pid the ID of the requested page
      * @param perm the requested permissions on the page
-     */
+      */
+
     public  Page getPage(TransactionId tid, PageId pid, Permissions perm)
         throws TransactionAbortedException, DbException {
+            // Method to get value from key in HashMap
+            if(bpage.containsKey(pid))
+                return bpage.get(pid);
+            else if(bpage.size()>=maxpage){
+                throw new DbException("BufferPool size has been Exceeded!");
+            }
+              else 
+            {
+                DbFile file = Database.getCatalog().getDbFile(pid.getTableId());  // these methods are defined in Catalog.java
+                Page p = file.readPage(pid); // Method specified in DbFile.java to read the page
+                bpage.put(pid,p);   // Adding page in the Bufferpool , pid and p are parameters specified in HashMap
+                  return p;
+
+            }
+            // create a new page and add
+
+
         // some code goes here
-        return null;
+      
     }
 
     /**
