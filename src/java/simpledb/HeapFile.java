@@ -22,8 +22,12 @@ public class HeapFile implements DbFile {
      *            the file that stores the on-disk backing store for this heap
      *            file.
      */
+    File f;
+    TupleDesc td;
     public HeapFile(File f, TupleDesc td) {
         // some code goes here
+        this.f=f;
+        this.td=td;
     }
 
     /**
@@ -33,7 +37,7 @@ public class HeapFile implements DbFile {
      */
     public File getFile() {
         // some code goes here
-        return null;
+        return f;
     }
 
     /**
@@ -47,7 +51,9 @@ public class HeapFile implements DbFile {
      */
     public int getId() {
         // some code goes here
-        throw new UnsupportedOperationException("implement this");
+        int hashc=f.getAbsoluteFile().hashCode();
+
+        return hashc;
     }
 
     /**
@@ -57,12 +63,26 @@ public class HeapFile implements DbFile {
      */
     public TupleDesc getTupleDesc() {
         // some code goes here
-        throw new UnsupportedOperationException("implement this");
+        return td;
     }
 
     // see DbFile.java for javadocs
     public Page readPage(PageId pid) {
         // some code goes here
+        int offset = pid.pageNumber()*BufferPool.PAGE_SIZE;
+        int size = BufferPool.PAGE_SIZE;
+        byte[] buf = new byte[size];
+        Page p;
+        try{
+            RandomAccessFile raf = new RandomAccessFile(f, "r");
+            raf.seek(offset);
+            raf.read(buf, 0, size);
+            p = new HeapPage((HeapPageId)pid, buf);
+            raf.close();
+            return p;
+        } catch (Exception e){
+            System.out.println("RandomAccessFile couldnt open");
+        }
         return null;
     }
 
@@ -77,7 +97,9 @@ public class HeapFile implements DbFile {
      */
     public int numPages() {
         // some code goes here
-        return 0;
+        double filelen=f.length();
+        double num=Math.ceil(filelen/BufferPool.PAGE_SIZE);
+        return num;
     }
 
     // see DbFile.java for javadocs
