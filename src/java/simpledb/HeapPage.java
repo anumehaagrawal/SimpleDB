@@ -2,9 +2,10 @@ package simpledb;
 
 import java.util.*;
 import java.io.*;
+//import simpledb.TupleDesc.*;
 
 /**
- * Each instance of HeapPage stores data for one page of HeapFiles and 
+ * Each instance of HeapPage stores data for one page of HeapFiles and
  * implements the Page interface that is used by BufferPool.
  *
  * @see HeapFile
@@ -64,23 +65,30 @@ public class HeapPage implements Page {
     /** Retrieve the number of tuples on this page.
         @return the number of tuples on this page
     */
-    private int getNumTuples() {        
+    private int getNumTuples() {
         // some code goes here
-        return 0;
+        int numTuples = 0;
+        double pageSize = (double)BufferPool.PAGE_SIZE*8;
+        //System.out.println(td.getSize() + "$#***");
+        double tupleSize = (double)(td.getSize() * 8 + 1);
+        numTuples = (int)Math.floor(pageSize/tupleSize);
+        return numTuples;
 
     }
 
     /**
-     * Computes the number of bytes in the header of a page in a HeapFile with each tuple occupying tupleSize bytes
+     * Computes the number of bytes is the header of a page in a HeapFile with each tuple occupying tupleSize bytes
      * @return the number of bytes in the header of a page in a HeapFile with each tuple occupying tupleSize bytes
      */
-    private int getHeaderSize() {        
-        
+    private int getHeaderSize() {
+
         // some code goes here
-        return 0;
-                 
+        int headerSize = (int) Math.ceil((double)getNumTuples() / 8.0);
+        //System.out.println(headerSize + "  ##$**");
+        return headerSize;
+
     }
-    
+
     /** Return a view of this page before it was modified
         -- used by recovery */
     public HeapPage getBeforeImage(){
@@ -93,7 +101,7 @@ public class HeapPage implements Page {
         }
         return null;
     }
-    
+
     public void setBeforeImage() {
         oldData = getPageData().clone();
     }
@@ -102,8 +110,9 @@ public class HeapPage implements Page {
      * @return the PageId associated with this page.
      */
     public HeapPageId getId() {
-    // some code goes here
-    throw new UnsupportedOperationException("implement this");
+      // some code goes here
+      //throw new UnsupportedOperationException("implement this");
+      return pid;
     }
 
     /**
@@ -187,7 +196,7 @@ public class HeapPage implements Page {
                 Field f = tuples[i].getField(j);
                 try {
                     f.serialize(dos);
-                
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -265,7 +274,7 @@ public class HeapPage implements Page {
     public TransactionId isDirty() {
         // some code goes here
 	// Not necessary for lab1
-        return null;      
+        return null;
     }
 
     /**
@@ -273,7 +282,14 @@ public class HeapPage implements Page {
      */
     public int getNumEmptySlots() {
         // some code goes here
-        return 0;
+
+        int count = 0;
+        for(int i=0;i<tuples.length;i++){
+          if(!(isSlotUsed(i))){
+            count++;
+          }
+        }
+        return count;
     }
 
     /**
@@ -281,7 +297,9 @@ public class HeapPage implements Page {
      */
     public boolean isSlotUsed(int i) {
         // some code goes here
-        return false;
+        int a = i/8;
+        int b = i%8;
+        return (((header[a] >> b) & 1) == 1);
     }
 
     /**
@@ -298,7 +316,14 @@ public class HeapPage implements Page {
      */
     public Iterator<Tuple> iterator() {
         // some code goes here
-        return null;
+        ArrayList<Tuple> tuplesOnPage = new ArrayList<Tuple>();
+        for(Tuple tp: tuples){
+          if(tp!=null){
+            tuplesOnPage.add(tp);
+          }
+
+        }
+        return tuplesOnPage.iterator();
     }
 
 }

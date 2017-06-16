@@ -1,5 +1,4 @@
 package simpledb;
-
 /** Unique identifier for HeapPage objects. */
 public class HeapPageId implements PageId {
 
@@ -10,14 +9,22 @@ public class HeapPageId implements PageId {
      * @param tableId The table that is being referenced
      * @param pgNo The page number in that table.
      */
+
+     private int tableIdSet;
+     private int pgNoSet;
+
     public HeapPageId(int tableId, int pgNo) {
         // some code goes here
+
+        tableIdSet = tableId;
+        pgNoSet = pgNo;
+
     }
 
     /** @return the table associated with this PageId */
     public int getTableId() {
         // some code goes here
-        return 0;
+        return tableIdSet;
     }
 
     /**
@@ -26,7 +33,7 @@ public class HeapPageId implements PageId {
      */
     public int pageNumber() {
         // some code goes here
-        return 0;
+        return pgNoSet;
     }
 
     /**
@@ -37,7 +44,12 @@ public class HeapPageId implements PageId {
      */
     public int hashCode() {
         // some code goes here
-        throw new UnsupportedOperationException("implement this");
+        //throw new UnsupportedOperationException("implement this");
+        String a;
+        int b;
+        a = Integer.toString(tableIdSet) + "0" + Integer.toString(pgNoSet);
+        b = Integer.parseInt(a);
+        return b;
     }
 
     /**
@@ -49,7 +61,17 @@ public class HeapPageId implements PageId {
      */
     public boolean equals(Object o) {
         // some code goes here
-        return false;
+        if(o instanceof HeapPageId){
+          HeapPageId toTest = (HeapPageId) o;
+          if(toTest.tableIdSet != tableIdSet || toTest.pgNoSet != pgNoSet){
+            return false;
+          }
+          else
+            return true;
+
+        }
+        else
+          return false;
     }
 
     /**
@@ -68,3 +90,4 @@ public class HeapPageId implements PageId {
     }
 
 }
+
