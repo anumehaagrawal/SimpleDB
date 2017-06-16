@@ -99,7 +99,7 @@ public class HeapFile implements DbFile {
         // some code goes here
         double filelen=f.length();
         double num=Math.ceil(filelen/BufferPool.PAGE_SIZE);
-        return num;
+        return (int)(num);
     }
 
     // see DbFile.java for javadocs
