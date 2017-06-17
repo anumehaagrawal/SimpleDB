@@ -45,11 +45,11 @@ public class HeapPageId implements PageId {
     public int hashCode() {
         // some code goes here
         //throw new UnsupportedOperationException("implement this");
-        String a;
+       /* String a;
         int b;
         a = Integer.toString(tableIdSet) + "0" + Integer.toString(pgNoSet);
-        b = Integer.parseInt(a);
-        return b;
+        b = Integer.parseInt(a);*/
+       return (tableIdSet << 16) | pgNoSet;
     }
 
     /**
