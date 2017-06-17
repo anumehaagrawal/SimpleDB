@@ -98,7 +98,8 @@ public class HeapFile implements DbFile {
         // some code goes here
         double filelen=f.length();
         double num=Math.ceil(filelen/BufferPool.PAGE_SIZE);
-        return (int)num;
+        return (int)(num);
+      
     }
 
     // see DbFile.java for javadocs
@@ -121,6 +122,7 @@ public class HeapFile implements DbFile {
     public DbFileIterator iterator(TransactionId tid) {
         // some code goes here
         return new HeapFileIterator(tid,this);
+
     }
 
 }
@@ -141,12 +143,98 @@ class HeapFileIterator implements DbFileIterator{
     PageId pgId = new HeapPageId(f.getId(), pgNo);
     Page page = Database.getBufferPool().getPage(tid,pgId,Permissions.READ_ONLY);
     HeapPage heapPage = (HeapPage)page;
-    if(heapPage == null)
+    /*if(heapPage == null)
     System.out.println("*****");
     if(page ==null)
     System.out.println("####");
     if(pgId == null)
-    System.out.println("$$$$");
+    System.out.println("$$$$");*/
+    tupIt = heapPage.iterator();
+
+  }
+
+    public boolean hasNext()  throws DbException, TransactionAbortedException{
+        if(tupIt==null)
+            return false;
+
+        if(tupIt.hasNext())
+            return true;
+        else{
+            if(pgNo>=f.numPages()-1)
+                return false;
+            else{
+                PageId pgId = new HeapPageId(f.getId(), pgNo+1);
+                HeapPage heappage = (HeapPage)Database.getBufferPool().getPage(tid,pgId,Permissions.READ_ONLY);
+
+                return heappage.iterator().hasNext();
+            }
+        }
+
+    }
+
+
+    public Tuple next()  throws DbException, TransactionAbortedException, NoSuchElementException{
+        if(tupIt==null)
+            throw new NoSuchElementException();
+
+        if (tupIt.hasNext())
+            return tupIt.next();
+        else
+        {
+            PageId pgId = new HeapPageId(f.getId(), pgNo+1);
+            Page page = Database.getBufferPool().getPage(tid,pgId,Permissions.READ_ONLY);
+            HeapPage heappage = (HeapPage)page;
+
+            if (page!=null)
+                if (heappage.iterator().hasNext())
+                {
+                    pgNo++;
+                    tupIt = heappage.iterator();
+                    return tupIt.next();
+                }
+            throw new NoSuchElementException();
+
+        }
+
+
+    }
+
+
+    public void rewind() throws DbException, TransactionAbortedException{
+        close();
+        open();
+
+    }
+
+
+    public void close(){
+        tupIt = null;
+        pgNo = 0;
+    }
+}
+
+class HeapFileIterator implements DbFileIterator{
+  private Iterator<Tuple> tupIt = null;
+  private TransactionId tid = null;
+  private HeapFile f = null;
+  private int pgNo = 0;
+
+  public HeapFileIterator(TransactionId tid , HeapFile f){
+    this.tid = tid;
+    this.f = f;
+  }
+
+  public void open() throws DbException, TransactionAbortedException{
+    pgNo = 0;
+    PageId pgId = new HeapPageId(f.getId(), pgNo);
+    Page page = Database.getBufferPool().getPage(tid,pgId,Permissions.READ_ONLY);
+    HeapPage heapPage = (HeapPage)page;
+    /*if(heapPage == null)
+    System.out.println("*****");
+    if(page ==null)
+    System.out.println("####");
+    if(pgId == null)
+    System.out.println("$$$$");*/
     tupIt = heapPage.iterator();
 
   }
@@ -209,4 +297,3 @@ class HeapFileIterator implements DbFileIterator{
         pgNo = 0;
     }
 }
-
