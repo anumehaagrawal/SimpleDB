@@ -62,7 +62,7 @@ public class BufferPool {
             else if(bpage.size()>=maxpage){
                 throw new DbException("BufferPool size has been Exceeded!");
             }
-              else 
+              else
             {
                 DbFile file = Database.getCatalog().getDbFile(pid.getTableId());  // these methods are defined in Catalog.java
                 Page p = file.readPage(pid); // Method specified in DbFile.java to read the page
@@ -74,7 +74,7 @@ public class BufferPool {
 
 
         // some code goes here
-      
+
     }
 
     /**
@@ -123,13 +123,13 @@ public class BufferPool {
 
     /**
      * Add a tuple to the specified table behalf of transaction tid.  Will
-     * acquire a write lock on the page the tuple is added to(Lock 
-     * acquisition is not needed for lab2). May block if the lock cannot 
+     * acquire a write lock on the page the tuple is added to(Lock
+     * acquisition is not needed for lab2). May block if the lock cannot
      * be acquired.
-     * 
+     *
      * Marks any pages that were dirtied by the operation as dirty by calling
-     * their markDirty bit, and updates cached versions of any pages that have 
-     * been dirtied so that future requests see up-to-date pages. 
+     * their markDirty bit, and updates cached versions of any pages that have
+     * been dirtied so that future requests see up-to-date pages.
      *
      * @param tid the transaction adding the tuple
      * @param tableId the table to add the tuple to
@@ -139,6 +139,9 @@ public class BufferPool {
         throws DbException, IOException, TransactionAbortedException {
         // some code goes here
         // not necessary for proj1
+        DbFile dbfile = Database.getCatalog().getDbFile(tableId);
+        Page p = dbfile.insertTuple(tid, t).get(0);
+        p.markDirty(true, tid);
     }
 
     /**
@@ -147,7 +150,7 @@ public class BufferPool {
      * the lock cannot be acquired.
      *
      * Marks any pages that were dirtied by the operation as dirty by calling
-     * their markDirty bit.  Does not need to update cached versions of any pages that have 
+     * their markDirty bit.  Does not need to update cached versions of any pages that have
      * been dirtied, as it is not possible that a new page was created during the deletion
      * (note difference from addTuple).
      *
@@ -158,6 +161,9 @@ public class BufferPool {
         throws DbException, TransactionAbortedException {
         // some code goes here
         // not necessary for proj1
+        DbFile dbfile = Database.getCatalog().getDbFile(t.getRecordId().getPageId().getTableId());
+        Page p = dbfile.deleteTuple(tid, t);
+        p.markDirty(true, tid);
     }
 
     /**
