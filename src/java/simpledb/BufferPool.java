@@ -27,6 +27,11 @@ public class BufferPool {
     private HashMap<PageId,Page> bpage ;
     private int maxpage;
 
+    /*HashTable to keep record of Least Recently Used Page */
+    /*Recently added page will have priority of value 0*/
+    /*Least Recently Used Page will have highest priority value and it will be evicted*/
+    private HashMap<PageId, Integer> recent;
+
 
     /**
      * Creates a BufferPool that caches up to numPages pages.
@@ -57,24 +62,38 @@ public class BufferPool {
     public  Page getPage(TransactionId tid, PageId pid, Permissions perm)
         throws TransactionAbortedException, DbException {
             // Method to get value from key in HashMap
-            if(bpage.containsKey(pid))
+            if(bpage.containsKey(pid)){
+                updatePriority();
+                recent.put(pid,0);
                 return bpage.get(pid);
+            }
             else if(bpage.size()>=maxpage){
-                throw new DbException("BufferPool size has been Exceeded!");
-            }
-              else 
-            {
-                DbFile file = Database.getCatalog().getDbFile(pid.getTableId());  // these methods are defined in Catalog.java
-                Page p = file.readPage(pid); // Method specified in DbFile.java to read the page
-                bpage.put(pid,p);   // Adding page in the Bufferpool , pid and p are parameters specified in HashMap
-                  return p;
-
-            }
+                evictPage();
+            } 
+            DbFile file = Database.getCatalog().getDbFile(pid.getTableId());  // these methods are defined in Catalog.java
+            Page p = file.readPage(pid); // Method specified in DbFile.java to read the page
+            bpage.put(pid,p);   // Adding page in the Bufferpool , pid and p are parameters specified in HashMap
+            updatePriority();
+            recent.put(pid, 0);
+            return p;
             // create a new page and add
 
 
         // some code goes here
       
+    }
+
+    /* Method to update the priority of all pages
+     * Page with highest priority is least recently used
+     */
+    public void updatePriority(){
+         if(recent.size() > 0){
+            for (PageId iter : recent.keySet()){
+                int priority = recent.get(iter);
+                priority++;
+                recent.put(iter,priority);
+            }
+         }
     }
 
     /**
@@ -139,6 +158,9 @@ public class BufferPool {
         throws DbException, IOException, TransactionAbortedException {
         // some code goes here
         // not necessary for proj1
+        DbFile dbfile = Database.getCatalog().getDbFile(tableId);
+        Page p = dbfile.insertTuple(tid, t).get(0);
+        p.markDirty(true, tid);
     }
 
     /**
@@ -158,6 +180,9 @@ public class BufferPool {
         throws DbException, TransactionAbortedException {
         // some code goes here
         // not necessary for proj1
+        DbFile dbfile = Database.getCatalog().getDbFile(t.getRecordId().getPageId().getTableId());
+        Page p = dbfile.deleteTuple(tid, t);
+        p.markDirty(true, tid);
     }
 
     /**
@@ -168,7 +193,9 @@ public class BufferPool {
     public synchronized void flushAllPages() throws IOException {
         // some code goes here
         // not necessary for proj1
-
+        for (PageId key : bpage.keySet()) {
+            flushPage(key);
+        }
     }
 
     /** Remove the specific page id from the buffer pool.
@@ -188,6 +215,13 @@ public class BufferPool {
     private synchronized  void flushPage(PageId pid) throws IOException {
         // some code goes here
         // not necessary for proj1
+        Page flush = bpage.get(pid);
+        DbFile file = Database.getCatalog().getDbFile(pid.getTableId());// accessing dbfile using methods from other classes
+        TransactionId dirty = flush.isDirty(); // fetching the dirty transactionId
+        if(dirty != null){
+            file.writePage(flush); 
+            flush.markDirty(false, null);
+        }
     }
 
     /** Write all pages of the specified transaction to disk.
@@ -204,6 +238,29 @@ public class BufferPool {
     private synchronized  void evictPage() throws DbException {
         // some code goes here
         // not necessary for proj1
+
+        PageId lru_pageid = null; // least recently used pageid
+        int i = -1;
+        //Finding page with highest priority(least recently used)
+        for(PageId iter : recent.keySet()){
+                int prior = recent.get(iter);
+                if( prior > i){
+                i = prior;
+                lru_pageid = iter;
+            }
+        }
+        //writing the page to disk if it's dirty
+        try{
+            flushPage(lru_pageid);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        // removing the page from bufferpool
+        bpage.remove(lru_pageid);
+        // removing the pageid from recently accesed page's hashmap <v>recent<v>
+        recent.remove(lru_pageid);
     }
 
+
 }
+
