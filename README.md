@@ -1,4 +1,4 @@
-This is a simple Database Management System developed using Java . The following files were completed during the course:-
+  This is a simple Database Management System developed using Java . The following files were completed during the course:-
 
 Anumeha :-
 
@@ -9,9 +9,7 @@ fixed the error.
 that.
 3) Catalog - I used HashMap to implement this class which made it easier to implement getPage method.
 
-4) Integer Aggregator - I used HashMap in the case where gfield is not null and ArrayList where gfield is null. I created a private method called
-aggfunctions to perform COUNT, ADD , MAX, MIN & AVG. I faced some problem in the iterator method but after referring to DBIterator and TupleIterator
-I was able to solve this. This file took quite some time though.
+4) Integer Aggregator - I used HashMap in the case where gfield is not null and ArrayList where gfield is null. I created a private method called aggfunctions to perform COUNT, ADD , MAX, MIN & AVG. I faced some problem in the iterator method but after referring to DBIterator and TupleIterator I was able to solve this. This file took quite some time though.
 
 5)String Aggregator - This file was easy to code as it was very similar to Integer Aggregator
 
