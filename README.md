@@ -16,3 +16,14 @@ that.
 6) Aggregate :- The Aggregation operator computes an aggregate. This class mostly contained methods which returned various fields needed for the 
 String and Integer Aggregator. I faced some problems in the open method but I referred to the Operator file and found out that I had to use 
 the call the function using super to use the methods in operator.
+
+
+Praveen Raj :-
+
+1. RecordId :- This was a fairly easy class, but I faced a problem with the implementation of hashCode method. Later I figured it out after looing at the return type and taking cues from other classes too.
+
+2. HeapPageId :- Here I built a constructor using global variable. Here too I had a problem with hashCode. Initially I had implemented it using string concatenation and returning the interger obtaibed by parsing the string. But that gave error because its format was not suitable for the HashMap. So later I implemented it using bitwise operator, in which I just concatenated the integers in a specific way.
+
+3. HeapPage :- HeapPage implemented Page interface. This was a fairly difficult class for me. The major problem I faced was with the implementation of isSlotEmpty method. After spending a lot of time I implemented it using bitwise operation, which I came up with after looking at the structure of the header. And I used almost similar logic to implement markSlotEmpty method. In here, I used the ArrayList in the iterator method which helped me as I could use the in built ArrayList.iterator method for my purpose.
+
+4. HeapFile :- Here inorder to implement the iterator I created a new class HeapFileIterator which implemented DbIterator. Its structure is mostly influenced by TupleIterator and for its implementation, I have also referred the HeapFileTest. In the insertTuple method I used ArrayList for storing and also for adding pages.
