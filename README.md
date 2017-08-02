@@ -1,4 +1,4 @@
-  This is a simple Database Management System developed using Java . The following files were completed during the course:-
+.   This is a simple Database Management System developed using Java . The following files were completed during the course:-
 
 Anumeha :-
 
@@ -11,7 +11,7 @@ that.
 
 4) Integer Aggregator - I used HashMap in the case where gfield is not null and ArrayList where gfield is null. I created a private method called aggfunctions to perform COUNT, ADD , MAX, MIN & AVG. I faced some problem in the iterator method but after referring to DBIterator and TupleIterator I was able to solve this. This file took quite some time though.
 
-5)String Aggregator - This file was easy to code as it was very similar to Integer Aggregator
+5. String Aggregator - This file was easy to code as it was very similar to Integer Aggregator
 
 6) Aggregate :- The Aggregation operator computes an aggregate. This class mostly contained methods which returned various fields needed for the 
 String and Integer Aggregator. I faced some problems in the open method but I referred to the Operator file and found out that I had to use 
