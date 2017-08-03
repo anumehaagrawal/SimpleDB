@@ -45,15 +45,15 @@ the call the function using super to use the methods in operator.
    
 #### Shubham :-
 
-1.Tuple :- It was a fairly easy class with very less coding to do.This is implemented with an array of Fields so as to have random access for setting and getting fields. The iterator is implemented by wrapping the array in a Java ArrayList and returning the iterator (had to look this up).
+1. Tuple :- It was a fairly easy class with very less coding to do.This is implemented with an array of Fields so as to have random access for setting and getting fields. The iterator is implemented by wrapping the array in a Java ArrayList and returning the iterator (had to look this up).
 
-2.Filter :- This class was created to filter out the tuples according to the constructor in the class.The process of iteration and applying the predicate took some effort otherwise the rest of the code was similar to what we had done before.function here was fetchNext, which iterated through the child iterator, applying the predicate filter function to see do the selection.
+2. Filter :- This class was created to filter out the tuples according to the constructor in the class.The process of iteration and applying the predicate took some effort otherwise the rest of the code was similar to what we had done before.function here was fetchNext, which iterated through the child iterator, applying the predicate filter function to see do the selection.
 
 
-3.Join :- This class implementation took a lot of time and i faced a lot of difficulties. i used a nested loop join. The join is done by iterating through the values of the column of the first join field and using the predicate to determine if it should join based on the join field on the right. If so, a new TupleDesc is made and the two corresponding tuples are merged.
+3. Join :- This class implementation took a lot of time and i faced a lot of difficulties. i used a nested loop join. The join is done by iterating through the values of the column of the first join field and using the predicate to determine if it should join based on the join field on the right. If so, a new TupleDesc is made and the two corresponding tuples are merged.
 
-4.Predicate :- This file only had some getter/setter methods and made use of Field's compare method
+4. Predicate :- This file only had some getter/setter methods and made use of Field's compare method
 
-5.JoinPredicate :- This file was also very simple and made use of Field's compare functionThis file was also very simple and made use of Field's compare function.
+5. JoinPredicate :- This file was also very simple and made use of Field's compare functionThis file was also very simple and made use of Field's compare function.
 ps: I faced problem mostly in the join and joinpredicate classes.
 
