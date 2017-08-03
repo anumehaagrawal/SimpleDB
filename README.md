@@ -43,7 +43,7 @@ the call the function using super to use the methods in operator.
 
    Recently added page will have priority of value 0 and Least Recently Used Page will have highest priority value which will eventually be evicted. I modified the ```getPage()``` method to suit the eviction policy.I created a new method to ```updatePriority()``` to update the HashMap keyvalue. Implementing evict page was a bit tougher. I ran into Exception errors in Eviction System Test, but fixed them with try() and catch().
    
-#### SHUBHAM :-
+#### Shubham :-
 
 1.Tuple :- It was a fairly easy class with very less coding to do.This is implemented with an array of Fields so as to have random access for setting and getting fields. The iterator is implemented by wrapping the array in a Java ArrayList and returning the iterator (had to look this up).
 
