@@ -61,6 +61,7 @@ public class IntegerAggregator implements Aggregator {
         if(mgbfield==NO_GROUPING)
             nogrouping.add(tup.getField(mafield));
         else{
+
             Field groupvalue=tup.getField(mgbfield);
             Field aggregatevalue=tup.getField(mafield);
             ArrayList<Field> agglist= withgrouping.get(groupvalue);
@@ -72,10 +73,7 @@ public class IntegerAggregator implements Aggregator {
                 agglist.add(aggregatevalue);
             withgrouping.put(groupvalue,agglist);
 
-        }
-
-        
-        
+        }         
     }
 
     /**
