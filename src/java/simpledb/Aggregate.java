@@ -1,6 +1,7 @@
 package simpledb;
 
 import java.util.*;
+import java.lang.*;
 
 /**
  * The Aggregation operator that computes an aggregate (e.g., sum, avg, max,
@@ -28,18 +29,34 @@ public class Aggregate extends Operator {
      *            there is no grouping
      * @param aop
      *            The aggregation operator to use
-     */
+     **/
+    private Aggregator finalagg;
+    private DbIterator finaliter;
+
     private DbIterator mchild;
     private int mafield;
     private int mgfield;
     private Aggregator.Op maop;
 
     public Aggregate(DbIterator child, int afield, int gfield, Aggregator.Op aop) {
-	// some code goes here
+    // some code goes here
+        Type gbfieldType;
+
         mchild=child;
         mafield=afield;
         mgfield=gfield;
         maop=aop;
+        finaliter=null;
+         Type afieldtype=mchild.getTupleDesc().getFieldType(mafield);
+        if(mgfield==Aggregator.NO_GROUPING)
+            gbfieldType=null;
+        else
+            gbfieldType=mchild.getTupleDesc().getFieldType(mgfield);
+
+        if(afieldtype==Type.INT_TYPE)
+            finalagg = new IntegerAggregator(mgfield,gbfieldType,mafield,maop);
+        else
+            finalagg = new StringAggregator(mgfield,gbfieldType,mafield,maop);
        
 
     }
@@ -50,8 +67,8 @@ public class Aggregate extends Operator {
      *         {@link simpledb.Aggregator#NO_GROUPING}
      * */
     public int groupField() {
-	// some code goes here
-	return mgfield;
+    // some code goes here
+    return mgfield;
     }
 
     /**
@@ -60,16 +77,19 @@ public class Aggregate extends Operator {
      *         null;
      * */
     public String groupFieldName() {
-	// some code goes here
-	return null;
+    // some code goes here
+        if(mgfield==Aggregator.NO_GROUPING)
+            return null;
+        else
+            return mchild.getTupleDesc().getFieldName(mgfield);
     }
 
     /**
      * @return the aggregate field
      * */
     public int aggregateField() {
-	// some code goes here
-	return -1;
+    // some code goes here
+    return mafield;
     }
 
     /**
@@ -77,25 +97,37 @@ public class Aggregate extends Operator {
      *         tuples
      * */
     public String aggregateFieldName() {
-	// some code goes here
-	return null;
+    // some code goes here
+    return mchild.getTupleDesc().getFieldName(mafield);
     }
 
     /**
      * @return return the aggregate operator
      * */
     public Aggregator.Op aggregateOp() {
-	// some code goes here
-	return null;
+    // some code goes here
+    return maop;
     }
 
     public static String nameOfAggregatorOp(Aggregator.Op aop) {
-	return aop.toString();
+    return aop.toString();
     }
 
     public void open() throws NoSuchElementException, DbException,
-	    TransactionAbortedException {
-	// some code goes here
+        TransactionAbortedException {
+    // some code goes here
+            // overwritting operator so using super.open
+            mchild.open();
+            super.open();
+            while(mchild.hasNext()){
+                finalagg.mergeTupleIntoGroup(mchild.next());
+                }
+            finaliter=finalagg.iterator();
+            finaliter.open();
+
+
+
+
     }
 
     /**
@@ -106,12 +138,16 @@ public class Aggregate extends Operator {
      * aggregate. Should return null if there are no more tuples.
      */
     protected Tuple fetchNext() throws TransactionAbortedException, DbException {
-	// some code goes here
-	return null;
+    // some code goes here
+        if(finaliter.hasNext())
+            return finaliter.next();
+        else
+           return null;
     }
 
-    public void rewind() throws DbException, TransactionAbortedException {
-	// some code goes here
+    public void rewind() throws DbException, TransactionAbortedException, NullPointerException {
+    // some code goes here
+        finaliter.rewind();
     }
 
     /**
@@ -126,23 +162,29 @@ public class Aggregate extends Operator {
      * iterator.
      */
     public TupleDesc getTupleDesc() {
-	// some code goes here
-	return null;
+    // some code goes here
+    return mchild.getTupleDesc();
     }
 
     public void close() {
-	// some code goes here
+        super.close();
+    // some code goes here
+        finaliter.close();
+        mchild.close();
+
     }
 
     @Override
     public DbIterator[] getChildren() {
-	// some code goes here
-	return null;
+    // some code goes here
+    return new DbIterator[]{finaliter};
     }
 
     @Override
     public void setChildren(DbIterator[] children) {
-	// some code goes here
+    // some code goes here
+        finaliter = children[0];
     }
     
 }
+
