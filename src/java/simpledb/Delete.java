@@ -17,7 +17,7 @@ public class Delete extends Operator {
     /**
      * Constructor specifying the transaction that this delete belongs to as
      * well as the child to read from.
-     * 
+     *
      * @param t
      *            The transaction this delete runs in
      * @param child
@@ -27,8 +27,8 @@ public class Delete extends Operator {
         // some code goes here
         this.t = t;
         this.child = child;
-        Type[] typear = {Type.INT_TYPE};
-        String[] fieldn = {"No of tuples deleted"};
+        Type[] typear = new Type[]{Type.INT_TYPE};
+        String[] fieldn = new String[]{"No of tuples deleted"};
         td = new TupleDesc(typear,fieldn);
     }
 
@@ -58,7 +58,7 @@ public class Delete extends Operator {
      * Deletes tuples as they are read from the child operator. Deletes are
      * processed via the buffer pool (which can be accessed via the
      * Database.getBufferPool() method.
-     * 
+     *
      * @return A 1-field tuple containing the number of deleted records.
      * @see Database#getBufferPool
      * @see BufferPool#deleteTuple
@@ -67,7 +67,7 @@ public class Delete extends Operator {
         // some code goes here
         if(fetch_called)
             return null;
-        fetch_called = true;  
+        fetch_called = true;
         int i = 0; //no of tuples inserted
         try{
             BufferPool bp = Database.getBufferPool();
@@ -76,7 +76,7 @@ public class Delete extends Operator {
                 bp.deleteTuple(t,tp);
                 i++;
             }
-            
+
         }catch(DbException e){
             e.printStackTrace();
         }
@@ -88,7 +88,7 @@ public class Delete extends Operator {
     @Override
     public DbIterator[] getChildren() {
         // some code goes here
-        return new DbIterator[] { child };
+        return new DbIterator[] {child};
     }
 
     @Override
@@ -98,4 +98,3 @@ public class Delete extends Operator {
     }
 
 }
-

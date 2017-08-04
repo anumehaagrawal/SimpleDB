@@ -40,7 +40,7 @@ public class BufferPool {
      */
     public BufferPool(int numPages) {
         bpage=  new HashMap<PageId,Page>();
-	recent = new HashMap<PageId,Integer>();
+        recent = new HashMap<PageId, Integer>();
         maxpage = numPages;
     }
 
@@ -71,7 +71,7 @@ public class BufferPool {
             }
             else if(bpage.size()>=maxpage){
                 evictPage();
-            } 
+            }
             DbFile file = Database.getCatalog().getDbFile(pid.getTableId());  // these methods are defined in Catalog.java
             Page p = file.readPage(pid); // Method specified in DbFile.java to read the page
             bpage.put(pid,p);   // Adding page in the Bufferpool , pid and p are parameters specified in HashMap
@@ -89,7 +89,9 @@ public class BufferPool {
      * Page with highest priority is least recently used
      */
     public void updatePriority(){
-         if(recent.size() > 0){
+        if(recent.size() == 0)
+          return;
+        if(recent.size() > 0){
             for (PageId iter : recent.keySet()){
                 int priority = recent.get(iter);
                 priority++;
@@ -221,7 +223,7 @@ public class BufferPool {
         DbFile file = Database.getCatalog().getDbFile(pid.getTableId());// accessing dbfile using methods from other classes
         TransactionId dirty = flush.isDirty(); // fetching the dirty transactionId
         if(dirty != null){
-            file.writePage(flush); 
+            file.writePage(flush);
             flush.markDirty(false, null);
         }
     }
@@ -265,4 +267,4 @@ public class BufferPool {
 
 
 }
-
+ 
