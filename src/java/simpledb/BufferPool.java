@@ -40,6 +40,7 @@ public class BufferPool {
      */
     public BufferPool(int numPages) {
         bpage=  new HashMap<PageId,Page>();
+	recent = new HashMap<PageId,Integer>();
         maxpage = numPages;
     }
 
