@@ -34,7 +34,7 @@ public class Utility {
     public static TupleDesc getTupleDesc(int n, String name) {
         return new TupleDesc(getTypes(n), getStrings(n, name));
     }
-
+ 
     /**
      * @return a TupleDesc with n fields of type Type.INT_TYPE
      */
@@ -136,7 +136,7 @@ public class Utility {
         Database.getCatalog().addTable(hf, UUID.randomUUID().toString());
         return hf;
     }
-    
+
     public static HeapFile openHeapFile(int cols, String colPrefix, File f) {
         // create the HeapFile and add it to the catalog
     	TupleDesc td = getTupleDesc(cols, colPrefix);
@@ -154,4 +154,3 @@ public class Utility {
         return out;
     }
 }
-
